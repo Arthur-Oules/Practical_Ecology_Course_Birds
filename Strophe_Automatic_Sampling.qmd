@@ -1,0 +1,122 @@
+---
+title: "Automatic random construction of the audio files for the ecology practical"
+author: "Paul PETIT"
+format: pdf
+editor: visual
+---
+
+::: {style="text-align: left"}
+## Packages, functions and initialization
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(here)
+library(tuneR)
+here("Strophe_Sampling_Functions.R") |>  source()
+set.seed(256345)
+```
+
+Note: The `set.seed` command ensures the reproducibility of the sampling step. If you want to repeat the experiment without reproducing it identically, you must change this number!
+
+We will use the `tuneR` package to manipulate audio files with `R`. Additionally, we import functions from a separate `R Script` to focus on the essentials in this document.
+
+Here is a brief description of the functions used:
+
+-   `silences` contains the possible lengths of silences.
+
+-   `individual_mix_audio_list` takes the path to a bird's recordings and returns a list of all the strophes of that bird's song.
+
+-   `add_silences` takes the mixed audio list for a bird returned by `individual_mix_audio_list` and adds silences before returning a final audio file.
+
+## Constructing the List of Created Audio Files
+
+Next, we define the names of the species and individuals we will use.
+
+```{r variables}
+species <- list.files(here("Strophe_Bank_WAV"))[-5]
+types <- list.files(here("Strophe_Bank_WAV", "Fauvette_Tete_Noire"))
+indiv <- paste0("Individu", 1:4)
+```
+
+Avec cela, on crée une liste compartimentée qui nous permettra de stocker tous les audios que nous allons produire. La première couche est celle désignant l'espèce, la seconde est le type d'audio (strophe complète, sifflement ou gazoulli) pour la FTN et la dernière couche ($2^{ème}$ sauf pour FTN pour laquelle c'est la $3^{ème}$) correspond au numéro de l'individu.
+
+Then, we create a compartmentalized list to store all the audio files we will produce. The first layer designates the species, the second layer is the type of audio (complete strophe, whistle, or warble) for the common warbler (FTN), and the final layer ($2^{nd}$ except for FTN where it's the $3^{rd}$) corresponds to the identification number of the individual.
+
+```{r storage_list}
+final_audio_list <- lapply(species, function(sp) {
+        if (sp == "Fauvette_Tete_Noire"){
+                sp_list <- lapply(types, function(tp){
+                        type_list <- setNames(
+                                vector("list", length(indiv)), indiv
+                        )
+                        return(type_list)
+                })
+                names(sp_list) <- types
+        } else{
+                sp_list <- setNames(vector("list", length(indiv)), indiv)
+        }
+        return(sp_list)
+})
+
+names(final_audio_list) <- species
+```
+
+Now, we just need to complete this list by creating the needed audio files.
+
+```{r}
+for (spec in species){
+        if (spec == "Fauvette_Tete_Noire"){
+                for (type in types){
+                        for (ind in indiv){
+                                list_audio <- here(
+                                        "Strophe_Bank_WAV", spec, type, ind
+                                ) |> individual_mix_audio_list()
+                                final_audio_list[[spec]][[type]][[ind]] <-
+                                        add_silences(list_audio, silences)
+                        }
+                }
+        } else{
+                for (ind in indiv){
+                        list_audio <- here("Strophe_Bank_WAV", spec, ind) |>
+                                individual_mix_audio_list()
+                        final_audio_list[[spec]][[type]][[ind]] <-
+                                add_silences(list_audio, silences)
+                }
+        }
+}
+```
+
+## Downloading the Audio Files
+
+Finally, each audio file needs to be downloaded into a specified folder with a relevant name. To do this, we will create the necessary subfolders within the `results` folder as we go along.
+
+```{r}
+for (sp in species){
+        if (sp == "Fauvette_Tete_Noire"){
+                for (type in types){
+                        path <- here("results", sp, type)
+                        create_folder(path)
+                        for (i in 1:4){
+                                name_file <- paste(
+                                        type, sp, i, sep="_"
+                                ) |> paste0(".wav")
+                                audio_file <-
+                                final_audio_list[[sp]][[type]][[indiv[i]]]
+                                writeWave(
+                                        audio_file,
+                                        here(path, name_file)
+                                )
+                        }
+                }
+        } else{
+                path <- here("results", sp)
+                create_folder(path)
+                for (i in 1:4){
+                        name_file <- paste(sp, i, sep="_") |> paste0(".wav")
+                        audio_file <- final_audio_list[[sp]][[indiv[i]]]
+                        writeWave(audio_file, here(path, name_file))
+                }
+        }
+}
+```
+:::
