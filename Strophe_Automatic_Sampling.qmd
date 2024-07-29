@@ -33,16 +33,16 @@ Here is a brief description of the functions and variables imported:
 Next, we define the names of the species and individuals we will use.
 
 ```{r variables}
-species <- list.files(here("Strophe_Bank_WAV"))[-5]
-types <- list.files(here("Strophe_Bank_WAV", "Fauvette_Tete_Noire"))
-indiv <- paste0("Individu", 1:4)
+species <- list.files(here("Strophe_Bank_WAV"))[-5] # this is because the fifth file should be Simplified_Names_File.qmd but if it's not, change this index
+types <- list.files(here("Strophe_Bank_WAV", "Sylvia_atricapilla"))
+indiv <- paste0("Individual", 1:4)
 ```
 
-Then, we create a compartmentalized list to store all the audio files we will produce. The first layer designates the species, the second layer is the type of audio (complete strophe, whistle, or warble) for the common warbler (FTN), and the final layer ($2^{nd}$ except for FTN where it's the $3^{rd}$) corresponds to the identification number of the individual.
+Then, we create a compartmentalized list to store all the audio files we will produce. The first layer designates the species, the second layer is the type of audio (complete strophe, whistle, or warble) for *Sylvia atricapilla*, and the final layer ($2^{nd}$ except for *S. atricapilla* where it's the $3^{rd}$) corresponds to the identification number of the individual.
 
 ```{r storage_list}
 final_audio_list <- lapply(species, function(sp) {
-        if (sp == "Fauvette_Tete_Noire"){
+        if (sp == "Sylvia_atricapilla"){
                 sp_list <- lapply(types, function(tp){
                         type_list <- setNames(
                                 vector("list", length(indiv)), indiv
@@ -63,7 +63,7 @@ Now, we just need to complete this list by creating the needed audio files.
 
 ```{r}
 for (spec in species){
-        if (spec == "Fauvette_Tete_Noire"){
+        if (spec == "Sylvia_atricapilla"){
                 for (type in types){
                         for (ind in indiv){
                                 list_audio <- here(
@@ -90,7 +90,7 @@ Finally, each audio file needs to be downloaded into a specified folder with a r
 
 ```{r}
 for (sp in species){
-        if (sp == "Fauvette_Tete_Noire"){
+        if (sp == "Sylvia_atricapilla"){
                 for (type in types){
                         path <- here("results", sp, type)
                         create_folder(path)
