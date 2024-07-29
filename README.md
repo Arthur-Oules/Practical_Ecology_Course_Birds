@@ -1,9 +1,9 @@
-# Practical Ecology Course: Behavioural ecology of *Sylvia atricapilla*
+# Practical Ecology Course: Behavioural Ecology of *Sylvia atricapilla*
 As part of a practical ecology course in the first year of biology at the ENS of Lyon, we used recorded bird strophes from various species to create audio tapes for broadcast to *S. atricapilla* males, enabling the study of their territorial behavior in response to both conspecific and heterospecific males.
 
 ## Project Overview
 - **Objective**: Analyze the territorial behavior of *S. atricapilla* males using synthesized bird songs.
-- **Method**: Construct complete bird songs by mixing strophes from a single bird individual to create a new song with a specified structure.
+- **Method**: Create bird songs by mixing strophes from individual birds to produce new songs with specific structures, repeated on different individuals of several species.
 
 ## Folder Structure
 - `Sampling_Audio_Files.Rproj`: `R` project file used to manage and organize the project within `RStudio`.
@@ -14,11 +14,11 @@ As part of a practical ecology course in the first year of biology at the ENS of
 
 ## How to Use
 1. Clone or download the entire repository;
-2. Populate the `Strophe_Bank_WAV` folder with your chosen strophe audio files;
+2. Fill the `Strophe_Bank_WAV` folder with your chosen strophe audio files;
 3. Open the `Sampling_Audio_Files.Rproj` file;
 4. Run the `Strophe_Automatic_Sampling.qmd` notebook to generate the complete bird songs in the `results` folder.
 
-## Troubleshooting
-If you encounter any issues while using this repository, please contact me at paul.petit@ens-lyon.fr.
+## Contact
+If you encounter any issues while using this repository, you may contact me at paul.petit@ens-lyon.fr.
 
 Feel free to explore, modify, and enhance the project as needed for your research and educational purposes.
