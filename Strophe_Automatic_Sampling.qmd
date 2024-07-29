@@ -20,11 +20,11 @@ Note: The `set.seed` command ensures the reproducibility of the sampling step. I
 
 We will use the `tuneR` package to manipulate audio files with `R`. Additionally, we import functions from a separate `R Script` to focus on the essentials in this document.
 
-Here is a brief description of the functions used:
+Here is a brief description of the functions and variables imported:
 
--   `silences` contains the possible lengths of silences.
+-   `silences` is a list containing the possible lengths of silences.
 
--   `individual_mix_audio_list` takes the path to a bird's recordings and returns a list of all the strophes of that bird's song.
+-   `individual_mix_audio_list` takes the path to a given bird and uses its audio recordings to return a list of the newly ordered strophes of that bird's song.
 
 -   `add_silences` takes the mixed audio list for a bird returned by `individual_mix_audio_list` and adds silences before returning a final audio file.
 
@@ -37,8 +37,6 @@ species <- list.files(here("Strophe_Bank_WAV"))[-5]
 types <- list.files(here("Strophe_Bank_WAV", "Fauvette_Tete_Noire"))
 indiv <- paste0("Individu", 1:4)
 ```
-
-Avec cela, on crée une liste compartimentée qui nous permettra de stocker tous les audios que nous allons produire. La première couche est celle désignant l'espèce, la seconde est le type d'audio (strophe complète, sifflement ou gazoulli) pour la FTN et la dernière couche ($2^{ème}$ sauf pour FTN pour laquelle c'est la $3^{ème}$) correspond au numéro de l'individu.
 
 Then, we create a compartmentalized list to store all the audio files we will produce. The first layer designates the species, the second layer is the type of audio (complete strophe, whistle, or warble) for the common warbler (FTN), and the final layer ($2^{nd}$ except for FTN where it's the $3^{rd}$) corresponds to the identification number of the individual.
 
