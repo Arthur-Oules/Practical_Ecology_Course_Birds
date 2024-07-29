@@ -41,7 +41,7 @@ concat_audio <- function(audio_files_list){
 alternative_audio_concat <- function(list1, list2){
         n <- length(list1) # == length(list2)
         if (n != length(list2)){
-                stop("Attention ! La taille des listes n'est pas la même.")
+                stop("Error! The size of the lists is not identical.")
         }
         result <- vector("list", 2*n)
         result[seq(1, length(result), by = 2)] <- list1
