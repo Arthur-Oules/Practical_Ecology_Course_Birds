@@ -38,7 +38,7 @@ types <- list.files(here("Strophe_Bank_WAV", "Sylvia_atricapilla"))
 indiv <- paste0("Individual", 1:4)
 ```
 
-Then, we create a compartmentalized list to store all the audio files we will produce. The first layer designates the species, the second layer is the type of audio (complete strophe, whistle, or warble) for *Sylvia atricapilla*, and the final layer ($2^{nd}$ except for *S. atricapilla* where it's the $3^{rd}$) corresponds to the identification number of the individual.
+Then, we create a compartmentalized list to store all the audio files we will produce. The first layer designates the species, the second layer is the type of audio (complete strophes, whistles, or warbles) for *Sylvia atricapilla*, and the final layer ($2^{nd}$ except for *S. atricapilla* where it's the $3^{rd}$) corresponds to the identification number of the individual.
 
 ```{r storage_list}
 final_audio_list <- lapply(species, function(sp) {
