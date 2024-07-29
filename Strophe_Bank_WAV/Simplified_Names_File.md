@@ -19,7 +19,7 @@
 	- Individual 4 = XC722814
 
 - *Parus major*:
-  - Individual 1 = XC310654
+	- Individual 1 = XC310654
 	- Individual 2 = XC537813
 	- Individual 3 = XC545823
 	- Individual 4 = XC779830
