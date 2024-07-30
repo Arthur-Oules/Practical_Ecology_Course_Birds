@@ -1,5 +1,5 @@
 # Practical Ecology Course: Behavioural Ecology of *Sylvia atricapilla*
-As part of a practical ecology course in the first year of biology at the ENS of Lyon, we used recorded bird strophes from various species to create audio tapes for broadcast to *S. atricapilla* males, enabling the study of their territorial behavior in response to both conspecific and heterospecific males.
+As part of a practical ecology course in the first year of biology at the ENS of Lyon, we used recorded bird strophes from various species to create audio files for broadcast to *S. atricapilla* males, enabling the study of their territorial behavior in response to both conspecific and heterospecific males.
 
 ## Project Overview
 - **Objective**: Analyze the territorial behavior of *S. atricapilla* males using synthesized bird songs.
