@@ -126,6 +126,11 @@ for (sp in species){
                                 ) |> paste0(i, ".wav")
                                 audio_file <-
                                 final_audio_list[[sp]][[type]][[indiv[i]]]
+                                ##### This part of the code is a solution I found to resolve an issue I enconter with writeWave function
+                                audio_file <- as(audio_file, "WaveMC")
+                                colnames(audio_file) <- c("FL", if (ncol(audio_file) > 1) "FR")
+                                audio_file@.Data[which(is.na(audio_file@.Data)),1] <- 0
+                                #####
                                 writeWave(
                                         audio_file,
                                         here(path, name_file)
@@ -138,6 +143,11 @@ for (sp in species){
                 for (i in 1:4){
                         name_file <- paste0(sp, i, ".wav")
                         audio_file <- final_audio_list[[sp]][[indiv[i]]]
+                        #### This part of the code is a solution I found to resolve an issue I enconter with writeWave function
+                        audio_file <- as(audio_file, "WaveMC")
+                        colnames(audio_file) <- c("FL", if (ncol(audio_file) > 1) "FR")
+                        audio_file@.Data[which(is.na(audio_file@.Data)),1] <- 0
+                        #####
                         writeWave(audio_file, here(path, name_file))
                 }
         }
