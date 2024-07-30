@@ -35,7 +35,7 @@ Here is a brief description of the functions and variables imported:
 Next, we define the names of the species and individuals we will use.
 
 ```{r variables}
-species <- list.files(here("Strophe_Bank_WAV"))[-2] # this is because the second file should be Simplified_Names_File.md but if it's not, change this index
+species <- list.files(here("Strophe_Bank_WAV"))[-3] # This index of 3 is because the third file should be Simplified_Names_File.md but if it's not the case, change it.
 types <- list.files(here("Strophe_Bank_WAV", "Sylvia_atricapilla"))
 indiv <- paste0("Individual", 1:4)
 ```
