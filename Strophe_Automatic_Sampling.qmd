@@ -16,29 +16,32 @@ here("Strophe_Sampling_Functions.R") |>  source()
 set.seed(256345)
 ```
 
-Note: The `set.seed` command ensures the reproducibility of the sampling step. If you want to repeat the experiment without reproducing it identically, you must change this number!
+Note: The `set.seed` command ensures the reproducibility of the sampling step.
+If you want to repeat the experiment without reproducing it identically, you must change this number!
 
-We will use the `tuneR` package to manipulate audio files with `R`. Additionally, we import functions from a separate `R Script` to focus on the essentials in this document.
+We will use the `tuneR` package to manipulate audio files with `R`.
+Additionally, we import functions from a separate `R Script` to focus on the essentials in this notebook.
 
 Here is a brief description of the functions and variables imported:
 
--   `silences` is a list containing the possible lengths of silences.
+- `silences_44k` and `silences_48k` are two lists containing the possible lengths of silences.
 
--   `individual_mix_audio_list` takes the path to a given bird and uses its audio recordings to return a list of the newly ordered strophes of that bird's song.
+- `individual_mix_audio_list` takes the path to a given bird and uses its audio recordings to return a newly ordered list of the strophes of that bird's song.
 
--   `add_silences` takes the mixed audio list for a bird returned by `individual_mix_audio_list` and adds silences before returning a final audio file.
+- `add_silences` takes the mixed audio list for a bird returned by `individual_mix_audio_list` and adds silences before returning a final audio file.
 
 ## Constructing the List of Created Audio Files
 
 Next, we define the names of the species and individuals we will use.
 
 ```{r variables}
-species <- list.files(here("Strophe_Bank_WAV"))[-5] # this is because the fifth file should be Simplified_Names_File.qmd but if it's not, change this index
+species <- list.files(here("Strophe_Bank_WAV"))[-2] # this is because the second file should be Simplified_Names_File.md but if it's not, change this index
 types <- list.files(here("Strophe_Bank_WAV", "Sylvia_atricapilla"))
 indiv <- paste0("Individual", 1:4)
 ```
 
-Then, we create a compartmentalized list to store all the audio files we will produce. The first layer designates the species, the second layer is the type of audio (complete strophes, whistles, or warbles) for *Sylvia atricapilla*, and the final layer ($2^{nd}$ except for *S. atricapilla* where it's the $3^{rd}$) corresponds to the identification number of the individual.
+Then, we create a compartmentalized list to store all the audio files we will produce.
+The first layer designates the species, the second layer is the type of audio (complete strophes, whistles, or warbles) for *Sylvia atricapilla*, and the final layer ($2^{nd}$ except for *S. atricapilla* where it's the $3^{rd}$) corresponds to the identification number of the individual.
 
 ```{r storage_list}
 final_audio_list <- lapply(species, function(sp) {
@@ -69,6 +72,17 @@ for (spec in species){
                                 list_audio <- here(
                                         "Strophe_Bank_WAV", spec, type, ind
                                 ) |> individual_mix_audio_list()
+                                samp_rates <- vector("integer", length(list_audio))
+                                for (i in length(list_audio)){
+                                        samp_rates <- list_audio[[i]]@samp.rate
+                                }
+                                if (all(samp_rates==48000)){
+                                        silences <- silences_48k
+                                } else if (all(samp_rates==44100)){
+                                        silences <- silences_44k
+                                } else{
+                                        stop("Error! There is an issue with sampling rates values.")
+                                }
                                 final_audio_list[[spec]][[type]][[ind]] <-
                                         add_silences(list_audio, silences)
                         }
@@ -77,6 +91,17 @@ for (spec in species){
                 for (ind in indiv){
                         list_audio <- here("Strophe_Bank_WAV", spec, ind) |>
                                 individual_mix_audio_list()
+                        samp_rates <- vector("integer", length(list_audio))
+                        for (i in length(list_audio)){
+                                samp_rates <- list_audio[[i]]@samp.rate
+                        }
+                        if (all(samp_rates==48000)){
+                                silences <- silences_48k
+                        } else if (all(samp_rates==44100)){
+                                silences <- silences_44k
+                        } else{
+                                stop("Error! There is an issue with sampling rates values.")
+                        }
                         final_audio_list[[spec]][[type]][[ind]] <-
                                 add_silences(list_audio, silences)
                 }
@@ -86,7 +111,8 @@ for (spec in species){
 
 ## Downloading the Audio Files
 
-Finally, each audio file needs to be downloaded into a specified folder with a relevant name. To do this, we will create the necessary subfolders within the `results` folder as we go along.
+Finally, each audio file needs to be downloaded into a specified folder with a relevant name.
+To do this, we will create the subfolders needed within the `results` folder as we go along.
 
 ```{r}
 for (sp in species){
@@ -96,8 +122,8 @@ for (sp in species){
                         create_folder(path)
                         for (i in 1:4){
                                 name_file <- paste(
-                                        type, sp, i, sep="_"
-                                ) |> paste0(".wav")
+                                        type, sp, sep="_"
+                                ) |> paste0(i, ".wav")
                                 audio_file <-
                                 final_audio_list[[sp]][[type]][[indiv[i]]]
                                 writeWave(
@@ -110,7 +136,7 @@ for (sp in species){
                 path <- here("results", sp)
                 create_folder(path)
                 for (i in 1:4){
-                        name_file <- paste(sp, i, sep="_") |> paste0(".wav")
+                        name_file <- paste0(sp, i, ".wav")
                         audio_file <- final_audio_list[[sp]][[indiv[i]]]
                         writeWave(audio_file, here(path, name_file))
                 }
