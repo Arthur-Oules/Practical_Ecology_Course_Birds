@@ -19,11 +19,12 @@ create_audio <- function(duration, sample_rate = 44100, bits = 16) {
 durations <- c(2.5, 3, 3.5, 4, 4.5)
 
 # Create a list of silent audio files
-silences <- sapply(durations, create_audio)
-names(silences) <- paste0("sec_", durations)
-big_silence <- create_audio(10)
+silences_44k <- sapply(durations, \(x) create_audio(x, sample_rate = 44100))
+names(silences_44k) <- paste0("sec_", durations)
+silences_48k <- sapply(durations, \(x) create_audio(x, sample_rate = 48000))
+names(silences_48k) <- paste0("sec_", durations)
 
-rm(silence, durations)
+rm(durations)
 
 #______________________________________________________________________________#
 
@@ -71,8 +72,7 @@ individual_mix_audio_list <- function(path){
 
 # Take the list of audios of a given bird and create the final random audio file
 add_silences <- function(
-                list_audio, list_silences=silences, time_max = 90,
-                final_silence = big_silence){
+                list_audio, list_silences=silences_44k, time_max = 90){
         n <- length(list_audio)
         list_silences <- sample(list_silences, n, replace=T)
         final_audio <- alternative_audio_concat(list_audio, list_silences)
@@ -89,6 +89,8 @@ add_silences <- function(
         # We include 10 seconds of silence at the end of the audio so that,
         # in practice, the person using the phone can listen to the full
         # 90 seconds without the next audio starting immediately.
+        sampling_rate <- final_audio@samp.rate
+        final_silence <- create_audio(10, sampling_rate)
         final_audio <- concat_audio(list(final_audio, final_silence))
         return(final_audio)
 }
