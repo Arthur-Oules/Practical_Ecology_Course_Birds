@@ -34,21 +34,20 @@ concat_audio <- function(audio_files_list){
         for (audio_file in audio_files_list[-1]){
                 audio_concat <- bind(audio_concat, audio_file)
         }
-        return(audio_concat)
+        audio_concat
 }
 
 # Return an audio file that alternates segments from audio files of two lists.
 # list1 et list2 have to be of same length
 alternative_audio_concat <- function(list1, list2){
         n <- length(list1) # == length(list2)
-        if (n != length(list2)){
+        if (n != length(list2)) {
                 stop("Error! The size of the lists is not identical.")
         }
         result <- vector("list", 2*n)
         result[seq(1, length(result), by = 2)] <- list1
         result[seq(2, length(result), by = 2)] <- list2
-        result <- concat_audio(result)
-        return(result)
+        concat_audio(result)
 }
 
 #______________________________________________________________________________#
@@ -56,33 +55,34 @@ alternative_audio_concat <- function(list1, list2){
 # Take a path through a given individual (bird)
 # Returns the randomly mixed list of complete strophes (or gazoulli or song)
 # for a given individual.
-individual_mix_audio_list <- function(path){
-        strophes <- list.files(path) |> sample()
+individual_mix_audio_list <- function(path) {
+        strophes <- sample(list.files(path))
         n <- length(strophes)
         result <- list()
         
         for (i in 1:n){
-                file_name <- strophes[i] |> tools::file_path_sans_ext()
-                result[[file_name]] <- here(path, strophes[i]) |> readWave()
+                file_name <- tools::file_path_sans_ext(strophes[i])
+                result[[file_name]] <- readWave(here(path, strophes[i]))
         }
-        return(result)
+        result
 }
 
 #______________________________________________________________________________#
 
 # Take the list of audios of a given bird and create the final random audio file
-add_silences <- function(
-                list_audio, list_silences=silences_44k, time_max = 90){
+add_silences <- function(list_audio,
+                         list_silences = silences_44k,
+                         time_max      = 90) {
         n <- length(list_audio)
-        list_silences <- sample(list_silences, n, replace=T)
+        list_silences <- sample(list_silences, n, replace = TRUE)
         final_audio <- alternative_audio_concat(list_audio, list_silences)
         length_max <- final_audio@samp.rate * time_max
         
         # We return an audio file of a maximum of 1 minute and 30 seconds.
         # If not long enough, we start over from the beginning.
-        if (length(final_audio) > length_max){
+        if (length(final_audio) > length_max) {
                 final_audio <- final_audio[1:length_max]
-        }else{
+        } else {
                 final_audio <- concat_audio(list(final_audio, final_audio))
                 final_audio <- final_audio[1:length_max]
         }
@@ -98,8 +98,6 @@ add_silences <- function(
 #______________________________________________________________________________#
 
 # Create a folder if it doesn't already exist
-create_folder <- function(path){
-        if (!dir.exists(path)){
-                dir.create(path, recursive = TRUE)
-        }
+create_folder <- function(path) {
+        if (!dir.exists(path)) {dir.create(path, recursive = TRUE)}
 }
